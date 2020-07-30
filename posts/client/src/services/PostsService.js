@@ -14,9 +14,7 @@ export default {
         return Api().get('post/' + params.id)
     },
     deletePost(id) {
-        let temp = Api().delete('posts/' + id);
-        this.fetchPosts();
-        return temp
+        return Api().delete('posts/' + id)
     }
 
 }

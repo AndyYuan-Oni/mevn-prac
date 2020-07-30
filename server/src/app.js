@@ -69,29 +69,32 @@ app.get('/post/:id', (req, res) => {
 
 //update a post
 app.put('/posts/:id', (req, res) => {
-        let db = req.db;
-        Post.findById(req.params.id, 'title description', function(error, post) {
-            if (error) { console.error(error); }
+    let db = req.db;
+    Post.findById(req.params.id, 'title description', function(error, post) {
+        if (error) { console.error(error); }
 
-            post.title = req.body.title;
-            post.description = req.body.description;
-            post.save(function(error) {
-                if (error) { console.error(error); }
-                res.send({ success: true })
-            })
+        post.title = req.body.title;
+        post.description = req.body.description;
+        post.save(function(error) {
+            if (error) { console.error(error); }
+            res.send({ success: true })
         })
     })
-    //delete a post
+})
+
+//delete a post
+// there is a _id prob need to be careful, it's a property of mongodb
 app.delete('/posts/:id', (req, res) => {
     let db = req.db;
+    console.log(req.params)
     Post.remove({
-        id: req.params.id
+        _id: req.params.id
     }, function(err, post) {
-        if (err) { res.send(err); }
+        if (err)
+            res.send(err)
         res.send({
             success: true
         })
-
     })
 })
 
