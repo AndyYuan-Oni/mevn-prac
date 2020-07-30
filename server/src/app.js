@@ -4,6 +4,17 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 const Post = require('../models/post')
+const path = require('path')
+
+//https
+const fs = require('fs');
+const https = require('https');
+const http = require('http')
+
+const privateKey = fs.readFileSync(path.resolve('./sslcert/server.key'));
+const certificate = fs.readFileSync(path.resolve('./sslcert/server.cert'));
+const credentials = { key: privateKey, cert: certificate };
+
 
 //connect db
 const mongoose = require('mongoose');
@@ -99,5 +110,14 @@ app.delete('/posts/:id', (req, res) => {
 })
 
 
-app.listen(process.env.PORT || port)
-console.log("listening on http://localhost:" + port)
+// app.listen(process.env.PORT || port)
+// console.log("listening on http://localhost:" + port)
+//https add
+
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app)
+
+
+httpServer.listen(5000);
+httpsServer.listen(port);
+console.log("listening on https://localhost:" + port)
