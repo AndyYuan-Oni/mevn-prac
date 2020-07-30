@@ -24,19 +24,18 @@ app.use(bodyParser.json())
 app.use(cors())
 
 //apis
-
+// get all posts
 app.get('/posts', (req, res) => {
-    res.send(
-        [{
-            title: "Hello World",
-            description: "HI there ! I'm practising"
-        }]
-    )
+    Post.find({}, 'title description', function(error, posts) {
+        if (error) { console.error(error); }
+        res.send({
+            posts: posts
+        })
+    }).sort({ _id: -1 })
 })
 
-//db apis
-
-app.post('/posts', (re, res) => {
+//create new post
+app.post('/posts', (req, res) => {
     let db = req.db;
     let title = req.body.title;
     let description = req.body.description;
@@ -54,6 +53,45 @@ app.post('/posts', (re, res) => {
             success: true,
             message: 'Post saved'
         })
+    })
+})
+
+//fetch a single post
+app.get('/post/:id', (req, res) => {
+    let db = req.db;
+    Post.findById(req.params.id, 'title description', function(error, posts) {
+        if (error) {
+            console.error(error);
+        }
+        res.send(posts)
+    })
+})
+
+//update a post
+app.put('/posts/:id', (req, res) => {
+        let db = req.db;
+        Post.findById(req.params.id, 'title description', function(error, post) {
+            if (error) { console.error(error); }
+
+            post.title = req.body.title;
+            post.description = req.body.description;
+            post.save(function(error) {
+                if (error) { console.error(error); }
+                res.send({ success: true })
+            })
+        })
+    })
+    //delete a post
+app.delete('/posts/:id', (req, res) => {
+    let db = req.db;
+    Post.remove({
+        id: req.params.id
+    }, function(err, post) {
+        if (err) { res.send(err); }
+        res.send({
+            success: true
+        })
+
     })
 })
 
